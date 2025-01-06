@@ -41,10 +41,10 @@ def text_to_speech(text):
     engine.setProperty("rate", 150)  # 음성 속도 설정
     engine.setProperty("voice", "com.apple.speech.synthesis.voice.kyoko")  # 한국어 여성 목소리 (macOS의 경우)
     engine.say(text)  # 텍스트를 음성으로 변환
-    engine.runAndWait()  # 음성 실행
+    engine.runAndWait()  # 음성 실행$
 
 if __name__ == "__main__":
-    print("음성 인식 시작!")
+    print("시작!")
     user_input = speech_to_text()
      
     if user_input:

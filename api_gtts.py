@@ -1,15 +1,21 @@
 import speech_recognition as sr
 import openai
 from gtts import gTTS
-from playsound import playsound  
+from playsound import playsound
 import os
+import socket
 
 OPENAI_API_KEY = "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"
 openai.api_key = OPENAI_API_KEY
 
+UDP_IP = "0.0.0.0"
+UDP_PORT = 5008
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind((UDP_IP, UDP_PORT))
+
 def speech_to_text():
     recognizer = sr.Recognizer()
-    microphone = sr.Microphone()
+    microphone = sr.Microphone() 
 
     try:
         print("말하세용")
@@ -40,16 +46,28 @@ def chat_with_gpt(prompt):
 def text_to_speech(text):
     tts = gTTS(text=text, lang='ko') 
     tts.save("output.mp3")
-    playsound("output.mp3")  # 변경된 부분
+    playsound("output.mp3")
+
+def send_udp_message(message):
+    sock.sendto(message.encode(), (UDP_IP, UDP_PORT))
 
 if __name__ == "__main__":
     print("시작!!")
-    user_input = speech_to_text()
-     
-    if user_input:
-        print("GPT에게 질문 전달 중...")
-        gpt_response = chat_with_gpt(user_input)
-        print("GPT의 응답:", gpt_response)
-        
-        print("응답을 음성으로 출력 중...")
-        text_to_speech(gpt_response)
+    while True:
+        try:
+            data, addr = sock.recvfrom(1024)
+            if data.decode('utf-8') == "1":
+                user_input = speech_to_text()
+
+                if user_input:
+                    print("GPT에게 질문 전달 중...")
+                    gpt_response = chat_with_gpt(user_input)
+                    print("GPT의 응답:", gpt_response)
+
+                    send_udp_message(gpt_response)
+
+                    print("응답을 음성으로 출력 중...")
+                    text_to_speech(gpt_response)
+
+        except socket.timeout:
+            continue

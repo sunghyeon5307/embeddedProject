@@ -3,8 +3,8 @@ import numpy as np
 from ultralytics import YOLO
 from tensorflow.keras.models import load_model
 
-yolo_model = YOLO("/Users/bagseonghyeon/Documents/융합프로젝트/face/yolov8n-face.pt")
-emotion_model = load_model('/Users/bagseonghyeon/Documents/융합프로젝트/face/model/emotion_model2.keras')
+yolo_model = YOLO("/Users/bagseonghyeon/Documents/embeddedProject/face/yolov8n-face.pt")
+emotion_model = load_model('/Users/bagseonghyeon/Documents/embeddedProject/face/model/my_model2.keras')
 
 def predict_emotion(face_image):
     face_image = cv2.cvtColor(face_image, cv2.COLOR_BGR2GRAY)
@@ -14,7 +14,7 @@ def predict_emotion(face_image):
     face_image = face_image / 255.0
     emotion_pred = emotion_model.predict(face_image)
     emotion_label = np.argmax(emotion_pred)
-    emotions = ['anger', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
+    emotions = ["angry", "sad", "happy", "neutral", "surprise"]
     return emotions[emotion_label]
 
 cap = cv2.VideoCapture(0)
